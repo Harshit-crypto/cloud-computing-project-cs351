@@ -99,6 +99,8 @@ func (this *RaftNode) broadcastHeartbeats() {
 				}
 
 				if this.state == "Leader" && termWhenHeartbeatSent == reply.Term {
+					
+
 					if reply.Success {
 
 						// There's changes you need to make here.
@@ -108,7 +110,8 @@ func (this *RaftNode) broadcastHeartbeats() {
 						//-------------------------------------------------------------------------------------------/
 						// TODO
 						//-------------------------------------------------------------------------------------------/
-
+						this.nextIndex[peerId] = currentPeer_nextIndex + len(entries)
+						this.matchIndex[peerId] = this.nextIndex[peerId] - 1
 						if (aeType == "Heartbeat" && LogHeartbeatMessages) || aeType == "AppendEntries" {
 							this.write_log("%s reply from NODE %d success: nextIndex := %v, matchIndex := %v", aeType, peerId, this.nextIndex, this.matchIndex)
 						}
