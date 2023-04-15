@@ -98,14 +98,14 @@ func (this *RaftNode) startElection() {
                 if reply.Term > this.currentTerm {
                     this.write_log("Received higher term %d from %d, becoming follower", reply.Term, peerId)
                     this.currentTerm = reply.Term
-                    this.becomeFollower()
+                    this.becomeFollower(this.currentTerm)
                     return
                 } else if reply.Term == this.currentTerm {
                     if reply.VoteGranted {
                         votesReceived += 1
                         if votesReceived > len(this.peersIds)/2 {
                             this.write_log("Received majority votes, becoming leader")
-                            this.becomeLeader()
+                            this.startLeader()
                         }
                     }
                 }
