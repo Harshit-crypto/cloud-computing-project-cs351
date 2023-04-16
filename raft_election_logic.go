@@ -47,72 +47,68 @@ func (this *RaftNode) startElectionTimer() {
 
 // startElection starts a new election with this RN as a candidate.
 func (this *RaftNode) startElection() {
-    this.state = "Candidate"
-    this.currentTerm += 1
-    termWhenVoteRequested := this.currentTerm
-    this.lastElectionTimerStartedTime = time.Now()
-    this.votedFor = this.id
-    this.write_log("became Candidate with term=%d;", termWhenVoteRequested)
+	this.state = "Candidate"
+	this.currentTerm += 1
+	termWhenVoteRequested := this.currentTerm
+	this.lastElectionTimerStartedTime = time.Now()
+	this.votedFor = this.id
+	this.write_log("became Candidate with term=%d;", termWhenVoteRequested)
 
-    votesReceived := 1
+	votesReceived := 1
 
-    // Send RequestVote RPCs to all other servers concurrently.
-    for _, peerId := range this.peersIds {
-        go func(peerId int) {
-            this.mu.Lock()
-            var LastLogIndexWhenVoteRequested, LastLogTermWhenVoteRequested int
+	// Send RequestVote RPCs to all other servers concurrently.
+	for _, peerId := range this.peersIds {
+		go func(peerId int) {
+			this.mu.Lock()
+			var LastLogIndexWhenVoteRequested, LastLogTermWhenVoteRequested int
 
-            if len(this.log) > 0 {
-                lastIndex := len(this.log) - 1
-                LastLogIndexWhenVoteRequested, LastLogTermWhenVoteRequested = lastIndex, this.log[lastIndex].Term
-            } else {
-                LastLogIndexWhenVoteRequested, LastLogTermWhenVoteRequested = -1, -1
-            }
-            this.mu.Unlock()
+			if len(this.log) > 0 {
+				lastIndex := len(this.log) - 1
+				LastLogIndexWhenVoteRequested, LastLogTermWhenVoteRequested = lastIndex, this.log[lastIndex].Term
+			} else {
+				LastLogIndexWhenVoteRequested, LastLogTermWhenVoteRequested = -1, -1
+			}
+			this.mu.Unlock()
 
-            args := RequestVoteArgs{
-                Term:         termWhenVoteRequested,
-                CandidateId:  this.id,
-                LastLogIndex: LastLogIndexWhenVoteRequested,
-                LastLogTerm:  LastLogTermWhenVoteRequested,
+			args := RequestVoteArgs{
+				Term:         termWhenVoteRequested,
+				CandidateId:  this.id,
+				LastLogIndex: LastLogIndexWhenVoteRequested,
+				LastLogTerm:  LastLogTermWhenVoteRequested,
 
-                Latency: rand.Intn(500), // Ignore Latency.
-            }
+				Latency: rand.Intn(500), // Ignore Latency.
+			}
 
-            if LogVoteRequestMessages {
-                this.write_log("sending RequestVote to %d: %+v", peerId, args)
-            }
+			if LogVoteRequestMessages {
+				this.write_log("sending RequestVote to %d: %+v", peerId, args)
+			}
 
-            var reply RequestVoteReply
-            if err := this.server.SendRPCCallTo(peerId, "RaftNode.RequestVote", args, &reply); err == nil {
-                this.mu.Lock()
-                defer this.mu.Unlock()
-                if LogVoteRequestMessages {
-                    this.write_log("received RequestVoteReply from %d: %+v", peerId, reply)
-                }
-                if this.state != "Candidate" {
-                    this.write_log("State changed from Candidate to %s", this.state)
-                    return
-                }
+			var reply RequestVoteReply
+			if err := this.server.SendRPCCallTo(peerId, "RaftNode.RequestVote", args, &reply); err == nil {
+				this.mu.Lock()
+				defer this.mu.Unlock()
+				if LogVoteRequestMessages {
+					this.write_log("received RequestVoteReply from %d: %+v", peerId, reply)
+				}
+				if this.state != "Candidate" {
+					this.write_log("State changed from Candidate to %s", this.state)
+					return
+				}
 
-                if reply.Term > this.currentTerm {
-                    this.write_log("Received higher term %d from %d, becoming follower", reply.Term, peerId)
-                    this.currentTerm = reply.Term
-                    this.becomeFollower(this.currentTerm)
-                    return
-                } else if reply.Term == this.currentTerm {
-                    if reply.VoteGranted {
-                        votesReceived += 1
-                        if votesReceived > len(this.peersIds)/2 {
-                            this.write_log("Received majority votes, becoming leader")
-                            this.startLeader()
-                        }
-                    }
-                }
-            }
-        }(peerId)
-    }
+				// IMPLEMENT HANDLING THE VOTEREQUEST's REPLY;
+				// You probably need to have implemented becomeFollower before this.
 
+				//-------------------------------------------------------------------------------------------/
+				if reply.Term > {
+					// TODO
+				} else if reply.Term ==  {
+					// TODO
+				}
+				//-------------------------------------------------------------------------------------------/
+
+			}
+		}(peerId)
+	}
 
 	// Run another election timer, in case this election is not successful.
 	go this.startElectionTimer()
@@ -122,16 +118,8 @@ func (this *RaftNode) startElection() {
 func (this *RaftNode) becomeFollower(term int) {
 	this.write_log("became Follower with term=%d; log=%v", term, this.log)
 
-	// Lock the mutex to prevent race conditions
-	this.mu.Lock()
-	defer this.mu.Unlock()
-
-	// Update the node's state variables
-	this.state = "Follower"
-	this.currentTerm = term
-	this.votedFor = -1
-
-	// Reset the election timer
-	this.lastElectionTimerStartedTime = time.Now()
+	// IMPLEMENT becomeFollower; do you need to start a goroutine here, maybe?
+	//-------------------------------------------------------------------------------------------/
+	// TODO
+	//-------------------------------------------------------------------------------------------/
 }
-

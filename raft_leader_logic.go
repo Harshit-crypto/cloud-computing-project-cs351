@@ -99,22 +99,19 @@ func (this *RaftNode) broadcastHeartbeats() {
 				}
 
 				if this.state == "Leader" && termWhenHeartbeatSent == reply.Term {
-					
-
-
 					if reply.Success {
-						this.nextIndex[peerId] = currentPeer_nextIndex + len(entries)
-						this.matchIndex[peerId] = this.nextIndex[peerId] - 1
+
+						// There's changes you need to make here.
+						// this.nextIndex for the received PEER (this.nextIndex[peerId]) needs to be updated.
+						// So does this.matchIndex[peerId].
+						// IMPLEMENT THE UPDATE LOGIC FOR THIS.
+						//-------------------------------------------------------------------------------------------/
+						// TODO
+						//-------------------------------------------------------------------------------------------/
+
 						if (aeType == "Heartbeat" && LogHeartbeatMessages) || aeType == "AppendEntries" {
 							this.write_log("%s reply from NODE %d success: nextIndex := %v, matchIndex := %v", aeType, peerId, this.nextIndex, this.matchIndex)
 						}
-					} else {
-						this.nextIndex[peerId] = currentPeer_nextIndex - 1
-						if (aeType == "Heartbeat" && LogHeartbeatMessages) || aeType == "AppendEntries" {
-							this.write_log("%s reply from NODE %d was failure; Hence, decrementing its nextIndex", aeType, peerId)
-						}
-					}
-
 						oldCommitIndex := this.commitIndex
 
 						// AppendEntries success on majority, now commit on leader (IF NOT HEARTBEAT)
@@ -128,12 +125,12 @@ func (this *RaftNode) broadcastHeartbeats() {
 								matchCount := 1 // Leader itself
 
 								for _, peerId := range this.peersIds {
-									if this.matchIndex[peerId] >= i {
+									if { // TODO  // When should you update matchCount?
 										matchCount++
 									}
 								}
 
-								if this.log[i].Term == this.currentTerm && matchCount > len(this.peersIds)/2 {
+								if { // TODO  // When should you update commitIndex to i?
 									this.commitIndex = i
 								}
 							}
@@ -155,17 +152,13 @@ func (this *RaftNode) broadcastHeartbeats() {
 						//-------------------------------------------------------------------------------------------/
 						// TODO
 						//-------------------------------------------------------------------------------------------/
-						this.nextIndex[peerId]--
-						if this.nextIndex[peerId] < 0 {
-							this.nextIndex[peerId] = 0
-						}
+
 						if (aeType == "Heartbeat" && LogHeartbeatMessages) || aeType == "AppendEntries" {
 							this.write_log("%s reply from NODE %d was failure; Hence, decrementing its nextIndex", aeType, peerId)
 						}
 					}
 				}
-			
+			}
 		}(peerId)
 	}
-
 }
