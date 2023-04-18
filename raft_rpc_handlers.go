@@ -102,7 +102,7 @@ func (this *RaftNode) HandleAppendEntries(args AppendEntriesArgs, reply *AppendE
 	}
 
 	if (aeType == "Heartbeat" && LogHeartbeatMessages) || aeType == "AppendEntries" {
-		this.write_log("Received %s from NODE %d; args: %+v", aeType, args.LeaderId, args)
+		this.write_log("Received %s from NODE %d; args: %+v", aeType, args.LeaderId, args)  //receives from node args
 	}
 
 	if args.Term > this.currentTerm {
