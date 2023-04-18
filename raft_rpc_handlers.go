@@ -68,7 +68,7 @@ func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVote
 
 }
 
-// Handles an incoming RPC AppendEntries request
+// This Handles an incoming RPC AppendEntries request
 
 type AppendEntriesArgs struct {
 	Term     int
