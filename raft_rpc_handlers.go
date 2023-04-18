@@ -2,7 +2,7 @@ package raft
 
 import "time"
 
-// Handles an incoming RPC RequestVote request
+// This Handles an incoming RPC RequestVote request
 type RequestVoteArgs struct {
 	Term         int
 	CandidateId  int
