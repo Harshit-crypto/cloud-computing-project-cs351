@@ -104,7 +104,7 @@ func (this *RaftNode) startElection() {
 				//-------------------------------------------------------------------------------------------/
 				if reply.Term > this.currentTerm {
 					this.write_log("Received RequestVoteReply with higher term. Becoming Follower with term=%d", this.currentTerm)
-					this.becomeFollower(reply.Term) //this.currentTerm)
+					this.becomeFollower(reply.Term)
 					return
 
 				} else if reply.Term == this.currentTerm {
