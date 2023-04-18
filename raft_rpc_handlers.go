@@ -46,7 +46,7 @@ func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVote
 
 	if args.Term > this.currentTerm {
 		this.becomeFollower(args.Term)
-		this.votedFor = this.id // args.candidate id
+		this.votedFor = args.CandidateId
 	}
 	// IMPLEMENT THE LOGIC FOR WHETHER THIS NODE VOTES FOR THE CANDIDATE THAT SENT
 	// THIS REQUEST, OR NOT
