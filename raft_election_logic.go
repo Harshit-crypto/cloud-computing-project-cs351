@@ -133,7 +133,7 @@ func (this *RaftNode) becomeFollower(term int) {
 	this.state = "Follower" //sets state to follower
 	this.currentTerm = term
 	this.votedFor = -1
-	this.lastElectionTimerStartedTime = time.Now()
-	go this.startElectionTimer()
+	this.lastElectionTimerStartedTime = time.Now() 
+	go this.startElectionTimer() //electectionTimer stated again
 
 }
