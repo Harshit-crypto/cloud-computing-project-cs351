@@ -57,8 +57,7 @@ func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVote
 		reply.VoteGranted = true
 		this.write_log("Node %d votes for Candidate %d", this.id, args.CandidateId)
 	} else {
-		reply.VoteGranted = true
-		this.write_log("heh no vote")
+		reply.VoteGranted = false
 	}
 	//-------------------------------------------------------------------------------------------/
 
