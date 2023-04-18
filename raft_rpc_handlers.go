@@ -44,11 +44,10 @@ func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVote
 		this.write_log("Received Vote Request from NODE %d; Args: %+v [currentTerm=%d, votedFor=%d, log index/term=(%d, %d)]", args.CandidateId, args, this.currentTerm, this.votedFor, nodeLastLogIndex, nodeLastLogTerm)
 	}
 
-	/*if args.Term > this.currentTerm {
+	if args.Term > this.currentTerm {
 		this.becomeFollower(args.Term)
 		this.votedFor = this.id // args.candidate id
-	}*/
-	this.votedFor= args.CandidateId
+	}
 	// IMPLEMENT THE LOGIC FOR WHETHER THIS NODE VOTES FOR THE CANDIDATE THAT SENT
 	// THIS REQUEST, OR NOT
 	// All the variables that you need for the conditions have been defined above.
