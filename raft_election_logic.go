@@ -130,7 +130,7 @@ func (this *RaftNode) startElection() {
 // becomeFollower sets a node to be a follower and resets its state.
 func (this *RaftNode) becomeFollower(term int) {
 	this.write_log("became Follower with term=%d; log=%v", term, this.log)
-	this.state = "Follower"
+	this.state = "Follower" //sets state to follower
 	this.currentTerm = term
 	this.votedFor = -1
 	this.lastElectionTimerStartedTime = time.Now()
