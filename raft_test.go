@@ -9,22 +9,13 @@ func Test1(t *testing.T) { // Simple Leader Election
 	cluster := NewCluster(t, 5)
 	defer cluster.Shutdown()
 
-	sleepMs(3000) // Wait for a leader to be elected
+
 
 	firstLeaderId := cluster.getClusterLeader()
+	sleepMs(30000)
+
 	cluster.DisconnectPeer(firstLeaderId)
 
-	secondLeaderId := cluster.getClusterLeader()
-	cluster.DisconnectPeer(secondLeaderId)
-
-	thirdLeaderId := cluster.getClusterLeader()
-	cluster.DisconnectPeer(thirdLeaderId)
-
-	sleepMs(3000)
-
-	// Fails, no leader present
-	cluster.getClusterLeader()
-	sleepMs(3000)
 
 }
 

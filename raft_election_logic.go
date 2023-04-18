@@ -95,17 +95,36 @@ func (this *RaftNode) startElection() {
 					return
 				}
 
+
 				// IMPLEMENT HANDLING THE VOTEREQUEST's REPLY;
 				// You probably need to have implemented becomeFollower before this.
 
 				//-------------------------------------------------------------------------------------------/
-				if reply.Term > {
-					// TODO
-				} else if reply.Term ==  {
-					// TODO
-				}
-				//-------------------------------------------------------------------------------------------/
 
+				if reply.Term > args.Term {
+                    this.write_log("Received higher term %d from %d, becoming follower", reply.Term, peerId)
+                    this.currentTerm = reply.Term
+                    this.becomeFollower(args.Term)
+					
+
+
+                    return
+                } else if reply.Term == args.Term {
+                    if reply.VoteGranted {
+                        votesReceived += 1
+                        if votesReceived > len(this.peersIds)/2 {
+                            this.write_log("Received majority votes, becoming leader")
+                            this.startLeader()
+
+						}	
+				//-------------------------------------------------------------------------------------------/
+						}
+				} else {
+					this.write_log("recieved lower term")
+					
+				}
+			}else{
+				this.write_log("some error in rpc")
 			}
 		}(peerId)
 	}
@@ -120,8 +139,6 @@ func (this *RaftNode) becomeFollower(term int) {
 
 	this.mu.Lock()
 	defer this.mu.Unlock()
-
-
 	// IMPLEMENT becomeFollower; do you need to start a goroutine here, maybe?
 	//-------------------------------------------------------------------------------------------/
 	// TODO

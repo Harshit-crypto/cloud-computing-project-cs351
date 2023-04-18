@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const LogHeartbeatMessages = false
+const LogHeartbeatMessages = true
 const LogVoteRequestMessages = true
 
 type LogEntry struct {

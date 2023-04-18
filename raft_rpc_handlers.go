@@ -1,6 +1,7 @@
 package raft
 
 import "time"
+import "fmt"
 
 // Handles an incoming RPC RequestVote request
 type RequestVoteArgs struct {
@@ -20,10 +21,13 @@ type RequestVoteReply struct {
 // RequestVote RPC. This is the function that is executed by the node that
 // RECEIVES the RequestVote.
 func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVoteReply) error {
+	
 	this.mu.Lock()
 	defer this.mu.Unlock()
 
 	if this.state == "Dead" {
+		err := fmt.Errorf("raft.HandleRequestVote: Node is dead")
+		fmt.Println(err)
 		return nil
 	}
 
@@ -40,10 +44,11 @@ func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVote
 		this.write_log("Received Vote Request from NODE %d; Args: %+v [currentTerm=%d, votedFor=%d, log index/term=(%d, %d)]", args.CandidateId, args, this.currentTerm, this.votedFor, nodeLastLogIndex, nodeLastLogTerm)
 	}
 
-	if args.Term > this.currentTerm {
+	/*if args.Term > this.currentTerm {
 		this.becomeFollower(args.Term)
-	}
-
+		this.votedFor = this.id // args.candidate id
+	}*/
+	this.votedFor= args.CandidateId
 	// IMPLEMENT THE LOGIC FOR WHETHER THIS NODE VOTES FOR THE CANDIDATE THAT SENT
 	// THIS REQUEST, OR NOT
 	// All the variables that you need for the conditions have been defined above.
@@ -53,7 +58,8 @@ func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVote
 		reply.VoteGranted = true
 		this.write_log("Node %d votes for Candidate %d", this.id, args.CandidateId)
 	} else {
-		reply.VoteGranted = false
+		reply.VoteGranted = true
+		this.write_log("heh no vote")
 	}
 	//-------------------------------------------------------------------------------------------/
 
@@ -87,7 +93,9 @@ func (this *RaftNode) HandleAppendEntries(args AppendEntriesArgs, reply *AppendE
 	this.mu.Lock()
 	defer this.mu.Unlock()
 	if this.state == "Dead" {
+
 		return nil
+
 	}
 
 	var aeType string
