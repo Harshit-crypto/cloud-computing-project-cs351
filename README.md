@@ -2,6 +2,12 @@ CLOUD COMPUTING - UE20CS351
 
 # Project: Implementing Raft Logic in Go
 
+### Batch - 7
+PES2UG20CS136 - Harshit Jain<br/>
+PES2UG20CS148 - J Chethana Datta<br/>
+PES2UG20CS176 - Lenver Pinto<br/>
+PES2UG20CS171 - Kshama Prasad<br/>
+
 ## **In this project, you will:**
 
 1. Learn the basics of GoLang.
