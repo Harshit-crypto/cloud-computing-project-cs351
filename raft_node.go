@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const LogHeartbeatMessages = false
+const LogHeartbeatMessages = true
 const LogVoteRequestMessages = true
 
 type LogEntry struct {
@@ -72,7 +72,11 @@ func NewRaftNode(id int, peersIds []int, server *Server, ready <-chan interface{
 	this.LOG_ENTRIES = true
 
 	this.filePath = "NodeLogs/" + strconv.Itoa(this.id)
-	f, _ := os.Create(this.filePath)
+	f, err := os.Create(this.filePath)
+
+	if err != nil {
+		log.Printf("ERROR NODELOG")
+	}
 	f.Close()
 
 	go func() {

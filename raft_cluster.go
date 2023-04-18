@@ -1,4 +1,5 @@
 package raft
+
 import (
 	"log"
 	"math/rand"

@@ -48,20 +48,24 @@ func (this *RaftNode) HandleRequestVote(args RequestVoteArgs, reply *RequestVote
 	// THIS REQUEST, OR NOT
 	// All the variables that you need for the conditions have been defined above.
 	//-------------------------------------------------------------------------------------------/
-	if (args.Term == this.currentTerm) && ((this.votedFor == -1 || this.votedFor == args.CandidateId) && (args.LastLogTerm >= this.lastApplied && args.LastLogIndex >= this.commitIndex)) { // TODO: what are the conditions necessary to vote? HINT: there's multiple.
-		// TODO: indicate that it has voted.
-		reply.VoteGranted = true
-		this.write_log("Node %d votes for Candidate %d", this.id, args.CandidateId)
+	if this.currentTerm == args.Term { // TODO: what are the conditions necessary to vote? HINT: there's multiple.
+		if this.votedFor == -1 || this.votedFor == args.CandidateId {
+			if nodeLastLogTerm == args.LastLogTerm && nodeLastLogIndex <= args.LastLogIndex {
+				this.votedFor = args.CandidateId
+				reply.VoteGranted = true
+				this.lastElectionTimerStartedTime = time.Now()
+			}
+		}
 	} else {
 		reply.VoteGranted = false
 	}
 	//-------------------------------------------------------------------------------------------/
-
 	reply.Term = this.currentTerm
 	if LogVoteRequestMessages {
 		this.write_log("Sending Request Vote Reply: %+v", reply)
 	}
 	return nil
+
 }
 
 // Handles an incoming RPC AppendEntries request

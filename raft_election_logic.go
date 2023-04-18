@@ -5,9 +5,12 @@ import (
 	"time"
 )
 
-/* startElectionTimer implements an election timer. It should be launched whenever
+/*
+	startElectionTimer implements an election timer. It should be launched whenever
+
 we want to start a timer towards becoming a candidate in a new election.
-This function runs as a go routine */
+This function runs as a go routine
+*/
 func (this *RaftNode) startElectionTimer() {
 	timeoutDuration := time.Duration(3000+rand.Intn(3000)) * time.Millisecond
 	this.mu.Lock()
@@ -99,11 +102,21 @@ func (this *RaftNode) startElection() {
 				// You probably need to have implemented becomeFollower before this.
 
 				//-------------------------------------------------------------------------------------------/
-				if reply.Term > {
-					// TODO
-				} else if reply.Term ==  {
-					// TODO
+				if reply.Term > this.currentTerm {
+					this.write_log("Received RequestVoteReply with higher term. Becoming Follower with term=%d", this.currentTerm)
+					this.becomeFollower(reply.Term) //this.currentTerm)
+					return
+
+				} else if reply.Term == this.currentTerm {
+					if reply.VoteGranted {
+						votesReceived++
+						if votesReceived > len(this.peersIds)/2 {
+							this.write_log("Received majority of votes. Becoming Leader with term=%d", this.currentTerm)
+							this.startLeader()
+						}
+					}
 				}
+
 				//-------------------------------------------------------------------------------------------/
 
 			}
@@ -117,17 +130,10 @@ func (this *RaftNode) startElection() {
 // becomeFollower sets a node to be a follower and resets its state.
 func (this *RaftNode) becomeFollower(term int) {
 	this.write_log("became Follower with term=%d; log=%v", term, this.log)
-
-	this.mu.Lock()
-	defer this.mu.Unlock()
-
-
-	// IMPLEMENT becomeFollower; do you need to start a goroutine here, maybe?
-	//-------------------------------------------------------------------------------------------/
-	// TODO
-    this.state = "Follower"
+	this.state = "Follower"
 	this.currentTerm = term
+	this.votedFor = -1
+	this.lastElectionTimerStartedTime = time.Now()
+	go this.startElectionTimer()
 
-    go this.startElectionTimer()
-	//-------------------------------------------------------------------------------------------/
 }
