@@ -111,7 +111,7 @@ func (this *Cluster) ReconnectPeer(id int) {
 			}
 		}
 	}
-	this.connected[id] = true
+	this.connected[id] = true //set connected id to true
 
 	this.nodes[id].raftLogic.mu.Lock()
 	this.nodes[id].raftLogic.LOG_ENTRIES = true
