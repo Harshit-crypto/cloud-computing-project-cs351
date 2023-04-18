@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-const LogHeartbeatMessages = true
-const LogVoteRequestMessages = true
+const LogHeartbeatMessages = true //comment true
+const LogVoteRequestMessages = true //hihello
 
 type LogEntry struct {
 	Command interface{}
